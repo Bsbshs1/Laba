@@ -1,0 +1,108 @@
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://example.com/budgetservice"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             name="BudgetService"
+             targetNamespace="http://example.com/budgetservice">
+
+    <!-- Типи даних -->
+    <types>
+        <xsd:schema targetNamespace="http://example.com/budgetservice">
+            <xsd:element name="addExpenseRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="category" type="xsd:string"/>
+                        <xsd:element name="amount" type="xsd:float"/>
+                        <xsd:element name="date" type="xsd:date"/>
+                        <xsd:element name="comment" type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="addIncomeRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="source" type="xsd:string"/>
+                        <xsd:element name="amount" type="xsd:float"/>
+                        <xsd:element name="date" type="xsd:date"/>
+                        <xsd:element name="comment" type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="getReportRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="startDate" type="xsd:date"/>
+                        <xsd:element name="endDate" type="xsd:date"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="ReportResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="totalIncome" type="xsd:float"/>
+                        <xsd:element name="totalExpenses" type="xsd:float"/>
+                        <xsd:element name="balance" type="xsd:float"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+
+    <!-- Месседжі -->
+    <message name="AddExpenseRequest">
+        <part name="parameters" element="tns:addExpenseRequest"/>
+    </message>
+    <message name="AddIncomeRequest">
+        <part name="parameters" element="tns:addIncomeRequest"/>
+    </message>
+    <message name="GetReportRequest">
+        <part name="parameters" element="tns:getReportRequest"/>
+    </message>
+    <message name="ReportResponse">
+        <part name="parameters" element="tns:ReportResponse"/>
+    </message>
+
+    <!-- Порти -->
+    <portType name="BudgetServicePortType">
+        <operation name="AddExpense">
+            <input message="tns:AddExpenseRequest"/>
+            <output message="tns:ReportResponse"/>
+        </operation>
+        <operation name="AddIncome">
+            <input message="tns:AddIncomeRequest"/>
+            <output message="tns:ReportResponse"/>
+        </operation>
+        <operation name="GetReport">
+            <input message="tns:GetReportRequest"/>
+            <output message="tns:ReportResponse"/>
+        </operation>
+    </portType>
+
+    <!-- Прив’язка -->
+    <binding name="BudgetServiceBinding" type="tns:BudgetServicePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="AddExpense">
+            <soap:operation soapAction="http://example.com/budgetservice/AddExpense"/>
+            <input><soap:body use="literal"/></input>
+            <output><soap:body use="literal"/></output>
+        </operation>
+        <operation name="AddIncome">
+            <soap:operation soapAction="http://example.com/budgetservice/AddIncome"/>
+            <input><soap:body use="literal"/></input>
+            <output><soap:body use="literal"/></output>
+        </operation>
+        <operation name="GetReport">
+            <soap:operation soapAction="http://example.com/budgetservice/GetReport"/>
+            <input><soap:body use="literal"/></input>
+            <output><soap:body use="literal"/></output>
+        </operation>
+    </binding>
+
+    <!-- Сервіс -->
+    <service name="BudgetService">
+        <documentation>Budget Management Service</documentation>
+        <port name="BudgetServicePort" binding="tns:BudgetServiceBinding">
+            <soap:address location="http://localhost:5000/"/>
+        </port>
+    </service>
+</definitions>
